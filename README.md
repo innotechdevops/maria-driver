@@ -3,7 +3,7 @@
 ## Install
 
 ```
-$ go get github.com/innotechdev/maria-driver
+$ go get github.com/innotechdevops/maria-driver
 ```
 
 ## How to use
