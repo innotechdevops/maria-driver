@@ -48,14 +48,12 @@ func New(config Config) MariaDBDriver {
 }
 
 // ConfigEnv for create mariadb driver
-func ConfigEnv() MariaDBDriver {
-	return &mariaDB{
-		Conf: Config{
-			User:         os.Getenv("MARIA_USER"),
-			Pass:         os.Getenv("MARIA_PASS"),
-			Host:         os.Getenv("MARIA_HOST"),
-			DatabaseName: os.Getenv("MARIA_DATABASE"),
-			Port:         os.Getenv("MARIA_PORT"),
-		},
+func ConfigEnv() Config {
+	return Config{
+		User:         os.Getenv("MARIA_USER"),
+		Pass:         os.Getenv("MARIA_PASS"),
+		Host:         os.Getenv("MARIA_HOST"),
+		DatabaseName: os.Getenv("MARIA_DATABASE"),
+		Port:         os.Getenv("MARIA_PORT"),
 	}
 }
