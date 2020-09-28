@@ -1,4 +1,4 @@
-module github.com/innotechdev/maria-driver
+module github.com/innotechdevops/maria-driver
 
 go 1.15
 
