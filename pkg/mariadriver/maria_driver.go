@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -23,6 +25,9 @@ type Config struct {
 	Host         string
 	DatabaseName string
 	Port         string
+	MaxLifetime  string
+	MaxIdleConns string
+	MaxOpenConns string
 }
 
 type mariaDB struct {
@@ -32,6 +37,16 @@ type mariaDB struct {
 func (db *mariaDB) Connect() *sqlx.DB {
 	dsName := fmt.Sprintf("%s:%s@(%s:%s)/%s?charset=utf8&parseTime=true", db.Conf.User, db.Conf.Pass, db.Conf.Host, db.Conf.Port, db.Conf.DatabaseName)
 	conn, err := sqlx.Connect("mysql", dsName)
+	maxOpenConns, _ := strconv.Atoi(db.Conf.MaxOpenConns)
+	maxIdleConns, _ := strconv.Atoi(db.Conf.MaxIdleConns)
+	maxLifetime, _ := strconv.Atoi(db.Conf.MaxLifetime)
+	if maxOpenConns > 0 {
+		conn.SetMaxOpenConns(maxOpenConns) // The default is 0 (unlimited), ex: 1000
+	}
+	if maxIdleConns > 0 {
+		conn.SetMaxIdleConns(maxIdleConns) // defaultMaxIdleConns = 2, ex: 10
+	}
+	conn.SetConnMaxLifetime(time.Duration(maxLifetime)) // 0, Connections are reused forever
 	if err != nil {
 		log.Fatalln(err)
 	} else {
@@ -55,5 +70,8 @@ func ConfigEnv() Config {
 		Host:         os.Getenv("MARIA_HOST"),
 		DatabaseName: os.Getenv("MARIA_DATABASE"),
 		Port:         os.Getenv("MARIA_PORT"),
+		MaxLifetime:  os.Getenv("MARIA_MAX_LIFETIME"),
+		MaxIdleConns: os.Getenv("MARIA_MAX_IDLE_CONNS"),
+		MaxOpenConns: os.Getenv("MARIA_MAX_OPEN_CONNS"),
 	}
 }

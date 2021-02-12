@@ -23,5 +23,8 @@ driver := mariadriver.New(mariadriver.Config{
     Host:         os.Getenv("MARIA_HOST"),
     DatabaseName: os.Getenv("MARIA_DATABASE"),
     Port:         mariadriver.DefaultPort,
+    MaxLifetime:  os.Getenv("MARIA_MAX_LIFETIME"),
+    MaxIdleConns: os.Getenv("MARIA_MAX_IDLE_CONNS"),
+    MaxOpenConns: os.Getenv("MARIA_MAX_OPEN_CONNS"),
 })
 ```
