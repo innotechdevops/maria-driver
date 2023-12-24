@@ -28,6 +28,7 @@ type Config struct {
 	MaxLifetime  string
 	MaxIdleConns string
 	MaxOpenConns string
+	Loc          string
 }
 
 type mariaDB struct {
@@ -36,6 +37,9 @@ type mariaDB struct {
 
 func (db *mariaDB) Connect() *sqlx.DB {
 	dsName := fmt.Sprintf("%s:%s@(%s:%s)/%s?charset=utf8&parseTime=true", db.Conf.User, db.Conf.Pass, db.Conf.Host, db.Conf.Port, db.Conf.DatabaseName)
+	if db.Conf.Loc != "" {
+		dsName += "&loc=" + db.Conf.Loc
+	}
 	conn, err := sqlx.Connect("mysql", dsName)
 	maxOpenConns, _ := strconv.Atoi(db.Conf.MaxOpenConns)
 	maxIdleConns, _ := strconv.Atoi(db.Conf.MaxIdleConns)
@@ -73,5 +77,6 @@ func ConfigEnv() Config {
 		MaxLifetime:  os.Getenv("MARIA_MAX_LIFETIME"),
 		MaxIdleConns: os.Getenv("MARIA_MAX_IDLE_CONNS"),
 		MaxOpenConns: os.Getenv("MARIA_MAX_OPEN_CONNS"),
+		Loc:          os.Getenv("MARIA_LOC"),
 	}
 }
